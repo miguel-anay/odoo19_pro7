@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="product_uom" model="ir.ui.view">
+      <field name="name">uom.uom.form.view.inherit</field>
+      <field name="model">uom.uom</field>
+      <field name="inherit_id" ref="uom.product_uom_form_view"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group[@name='uom_details']" position="inside">
+            <field name="code" readonly="1"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

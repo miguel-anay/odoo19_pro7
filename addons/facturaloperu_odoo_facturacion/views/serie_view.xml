@@ -1,0 +1,51 @@
+<odoo>
+  <data>
+
+    <record id="feapi_serie_form_view" model="ir.ui.view">
+      <field name="name">feapi.serie.form.view</field>
+      <field name="model">feapi.serie</field>
+      <field name="arch" type="xml">
+        <form string="Form Series">
+          <sheet>
+            <group>
+              <group string="Configuración">
+                <field name="document_type_id"/>
+                <field name="name" placeholder="F001" help="Debe coincidir con el código del diario contable"/>
+                <field name="description"/>
+              </group>
+              <group string="Estado actual (API FacturaloPeru)">
+                <field name="last_number_feapi" readonly="1"/>
+                <field name="total_invoices" readonly="1"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="feapi_serie_tree_view" model="ir.ui.view">
+      <field name="name">feapi.serie.list.view</field>
+      <field name="model">feapi.serie</field>
+      <field name="arch" type="xml">
+        <list string="Series de Facturación">
+          <field name="document_type_id"/>
+          <field name="name"/>
+          <field name="description"/>
+          <field name="last_number_feapi" string="Último número (API)"/>
+          <field name="total_invoices" string="Total emitidos"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="action_serie" model="ir.actions.act_window">
+      <field name="name">Gestión de Series</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">feapi.serie</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem name="Facturalo Peru API" id="serie_menu" parent="account.menu_finance_configuration" sequence="20"/>
+    <menuitem name="Gestión de series" id="gestion_serie_menu" parent="serie_menu" action="action_serie" sequence="1"/>
+
+  </data>
+</odoo>

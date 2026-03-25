@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Update PEN currency labels -->
+        <record id="base.PEN" model="res.currency">
+            <field name="name">PEN</field>
+            <field name="symbol">S/</field>
+            <field name="currency_unit_label">Soles</field>
+            <field name="currency_subunit_label">Centimos</field>
+        </record>
+    </data>
+</odoo>

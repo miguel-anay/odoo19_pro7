@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <data>
+        <!-- journals -->
+        <record id="account_journal_boleta" model="account.journal">
+            <field name="name">Boletas del cliente B001</field>
+            <field name="code">B001</field>
+            <field name="type">sale</field>
+        </record>
+
+        <record id="account_journal_factura" model="account.journal">
+            <field name="name">Facturas del cliente F001</field>
+            <field name="code">F001</field>
+            <field name="type">sale</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ================================================================
+         RECEIPT HEADER: reemplaza completamente el header del ticket
+         ================================================================ -->
+    <t t-name="pos_ticket.ReceiptHeader"
+       t-inherit="point_of_sale.ReceiptHeader"
+       t-inherit-mode="extension">
+
+        <!-- 1. Reemplaza el logo con encabezado completo de empresa -->
+        <xpath expr="//img[hasclass('pos-receipt-logo')]" position="replace">
+            <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:6px; margin-bottom:6px; font-family:'Courier New',monospace; font-size:10px;">
+                <img t-att-src="logoUrl" alt="Logo" style="max-height:50px; max-width:110px; display:block; margin:0 auto 4px;"/>
+                <div style="font-weight:bold; font-size:12px;"><t t-esc="order.company.name"/></div>
+                <div>RUC <t t-esc="order.company.vat"/></div>
+                <div>
+                    <t t-if="order.company.street"><t t-esc="order.company.street"/></t>
+                    <t t-if="order.company.city"> , <t t-esc="order.company.city"/></t>
+                    <t t-if="order.company.state_id?.name"> , <t t-esc="order.company.state_id.name"/></t>
+                    <t t-if="order.company.country_id?.name"> - <t t-esc="order.company.country_id.name"/></t>
+                </div>
+                <t t-if="order.company.phone"><div>Central telefónica: <t t-esc="order.company.phone"/></div></t>
+                <t t-if="order.company.email"><div>Email: <t t-esc="order.company.email"/></div></t>
+                <t t-if="order.company.website"><div>Web: <t t-esc="order.company.website"/></div></t>
+            </div>
+            <!-- Caja documento SUNAT -->
+            <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:6px; margin-bottom:6px; font-family:'Courier New',monospace;">
+                <div style="font-weight:bold; font-size:13px;">R.U.C. <t t-esc="order.company.vat"/></div>
+                <div style="font-weight:bold; font-size:11px;">
+                    <t t-if="order.document_type_number === '01'">FACTURA ELECTRÓNICA</t>
+                    <t t-elif="order.document_type_number === '03'">BOLETA DE VENTA ELECTRÓNICA</t>
+                    <t t-else="">COMPROBANTE ELECTRÓNICO</t>
+                </div>
+                <t t-if="order.serial_number">
+                    <div style="font-weight:bold; font-size:12px;"><t t-esc="order.serial_number"/></div>
+                </t>
+            </div>
+        </xpath>
+
+        <!-- 2. Reemplaza la sección de fecha/ticket con datos de emisión -->
+        <xpath expr="//div[hasclass('text-center') and hasclass('pt-3')]" position="replace">
+            <div style="font-family:'Courier New',monospace; font-size:9px; margin-bottom:4px;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <tr>
+                        <td style="font-weight:bold; width:40%;">F. Emisión:</td>
+                        <td><t t-esc="order.date_order ? new Date(order.date_order).toLocaleDateString('es-PE') : ''"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;">H. Emisión:</td>
+                        <td><t t-esc="order.date_order ? new Date(order.date_order).toLocaleTimeString('es-PE') : ''"/></td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+
+        <!-- 3. Reemplaza la sección del cliente/cashier con datos del cliente SUNAT -->
+        <xpath expr="//div[hasclass('d-flex') and hasclass('flex-column') and hasclass('align-items-center')]" position="replace">
+            <div style="font-family:'Courier New',monospace; font-size:9px; border-bottom:1px dashed #000; padding-bottom:4px; margin-bottom:4px;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <t t-if="order.partner_id">
+                        <tr>
+                            <td style="font-weight:bold; width:40%;">Cliente:</td>
+                            <td><t t-esc="order.partner_id.name"/></td>
+                        </tr>
+                        <tr t-if="order.partner_id.vat">
+                            <td style="font-weight:bold;">
+                                <t t-if="order.partner_id.vat.length === 11">RUC:</t>
+                                <t t-else="">DNI:</t>
+                            </td>
+                            <td><t t-esc="order.partner_id.vat"/></td>
+                        </tr>
+                        <tr t-if="order.partner_id.pos_contact_address">
+                            <td style="font-weight:bold;">Dirección:</td>
+                            <td><t t-esc="order.partner_id.pos_contact_address"/></td>
+                        </tr>
+                    </t>
+                    <tr>
+                        <td style="font-weight:bold;">Orden de Compra:</td>
+                        <td>-</td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+
+    </t>
+
+
+    <!-- ================================================================
+         ORDER RECEIPT: modifica la tabla de productos, totales y pie
+         ================================================================ -->
+    <t t-name="pos_ticket.OrderReceipt"
+       t-inherit="point_of_sale.OrderReceipt"
+       t-inherit-mode="extension">
+
+        <!-- 1. Reemplaza OrderDisplay (líneas de productos) con tabla ticket -->
+        <xpath expr="//OrderDisplay" position="replace">
+            <div style="font-family:'Courier New',monospace; font-size:9px;">
+                <table style="width:100%; border-collapse:collapse; border-top:1px dashed #000; border-bottom:1px dashed #000;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; padding:2px 1px; width:10%;">COD.</th>
+                            <th style="text-align:center; padding:2px 1px; width:9%;">CANT.</th>
+                            <th style="text-align:center; padding:2px 1px; width:10%;">UNID.</th>
+                            <th style="text-align:left; padding:2px 1px;">DESCRIPCIÓN</th>
+                            <th style="text-align:right; padding:2px 1px; width:13%;">P.UNIT</th>
+                            <th style="text-align:right; padding:2px 1px; width:14%;">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="order.lines" t-as="line" t-key="line.uuid">
+                            <tr>
+                                <td style="text-align:center; padding:2px 1px;">
+                                    <t t-esc="line.product_id.default_code || ''"/>
+                                </td>
+                                <td style="text-align:center; padding:2px 1px;">
+                                    <t t-esc="line.qty"/>
+                                </td>
+                                <td style="text-align:center; padding:2px 1px;">
+                                    <t t-esc="line.product_id.uom_id?.name || 'NIU'"/>
+                                </td>
+                                <td style="padding:2px 1px;">
+                                    <t t-esc="line.product_id.display_name || line.product_id.name"/>
+                                    <t t-if="line.discount">
+                                        <div style="font-size:8px;"><t t-esc="Math.round(line.discount)"/>% Descuento</div>
+                                    </t>
+                                </td>
+                                <td style="text-align:right; padding:2px 1px;">
+                                    <t t-esc="formatCurrency(line.price_unit)"/>
+                                </td>
+                                <td style="text-align:right; padding:2px 1px;">
+                                    <t t-esc="formatCurrency(line.price_subtotal_incl)"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+
+        <!-- 2. Reemplaza la sección de impuestos con IGV + TOTAL ticket -->
+        <xpath expr="//div[hasclass('pos-receipt-taxes')]" position="replace">
+            <div style="font-family:'Courier New',monospace; font-size:9px; margin-top:4px;">
+                <t t-set="taxTotals" t-value="order.prices.taxDetails"/>
+                <t t-if="taxTotals and taxTotals.has_tax_groups">
+                    <t t-foreach="taxTotals.subtotals" t-as="subtotal" t-key="subtotal.name">
+                        <t t-foreach="subtotal.tax_groups" t-as="tax_group" t-key="tax_group.id">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="font-weight:bold;">IGV:</span>
+                                <span><t t-esc="formatCurrency(tax_group.tax_amount_currency)"/></span>
+                            </div>
+                        </t>
+                    </t>
+                </t>
+            </div>
+        </xpath>
+
+        <!-- 3. Agrega TOTAL A PAGAR después del total estándar y antes del footer -->
+        <xpath expr="//div[hasclass('before-footer')]" position="before">
+            <div style="font-family:'Courier New',monospace; font-size:9px; border-top:1px dashed #000; margin-top:4px; padding-top:4px;">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:11px;">
+                    <span>TOTAL A PAGAR:</span>
+                    <span><t t-esc="order.currencyDisplayPriceIncl"/></span>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- 4. Agrega pie del ticket: Vendedor, Condición de pago, URL buscar -->
+        <xpath expr="//div[hasclass('after-footer')]" position="before">
+            <div style="font-family:'Courier New',monospace; font-size:9px; border-top:1px dashed #000; margin-top:4px; padding-top:4px;">
+                <div><span style="font-weight:bold;">Vendedor:</span></div>
+                <div><t t-esc="order.getCashierName ? order.getCashierName() : ''"/></div>
+            </div>
+            <div style="font-family:'Courier New',monospace; font-size:9px; text-align:center; border-top:1px dashed #000; margin-top:4px; padding-top:4px;">
+                <t t-if="order.company.website">
+                    <div>Para consultar el comprobante ingresar a</div>
+                    <div style="font-weight:bold;"><t t-esc="order.company.website"/>/buscar</div>
+                </t>
+                <div>
+                    Representacion impresa de
+                    <t t-if="order.document_type_number === '01'">la Factura Electrónica</t>
+                    <t t-elif="order.document_type_number === '03'">la Boleta de Venta Electrónica</t>
+                    <t t-else="">el Comprobante Electrónico</t>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- 5. Oculta el "Total" estándar (usamos el nuestro arriba) -->
+        <xpath expr="//div[hasclass('receipt-total')]" position="replace"/>
+
+    </t>
+
+</templates>

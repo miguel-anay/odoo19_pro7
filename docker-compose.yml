@@ -1,0 +1,25 @@
+version: '3'
+services:
+  web:
+    image: odoo:19.0
+    container_name: fp_odoo
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - fp-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+  db:
+    image: postgres:16
+    container_name: fp_bd
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-odoo}
+      - POSTGRES_USER=${POSTGRES_USER:-odoo}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - fp-db-data:/var/lib/postgresql/data/pgdata
+volumes:
+  fp-web-data:
+  fp-db-data:

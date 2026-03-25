@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <record id="view_query_status_wizard_form" model="ir.ui.view">
+      <field name="name">account.move.query.status.wizard.form</field>
+      <field name="model">account.move.query.status.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Consulta masiva de estado SUNAT">
+          <group>
+            <field name="date_from"/>
+            <field name="date_to"/>
+          </group>
+          <footer>
+            <button name="action_query_status" type="object"
+                    string="Consultar estado" class="oe_highlight"/>
+            <button special="cancel" string="Cancelar"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_query_status_wizard" model="ir.actions.act_window">
+      <field name="name">Consulta masiva estado SUNAT</field>
+      <field name="res_model">account.move.query.status.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <!-- Botón en la vista lista de facturas -->
+    <record id="action_server_query_status_masivo" model="ir.actions.server">
+      <field name="name">Consultar estado en API (masivo)</field>
+      <field name="model_id" ref="account.model_account_move"/>
+      <field name="binding_model_id" ref="account.model_account_move"/>
+      <field name="binding_view_types">list</field>
+      <field name="state">code</field>
+      <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Consulta masiva estado SUNAT',
+    'res_model': 'account.move.query.status.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+}
+      </field>
+    </record>
+
+  </data>
+</odoo>

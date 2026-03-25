@@ -1,0 +1,5 @@
+<odoo>
+    <data>
+        <!-- Assets now defined in __manifest__.py -->
+    </data>
+</odoo>

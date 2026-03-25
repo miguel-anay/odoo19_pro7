@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_einvoice_catalog_01_manager,einvoice.catalog.01.manager,model_einvoice_catalog_01,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_01_user,einvoice.catalog.01.user,model_einvoice_catalog_01,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_06_manager,einvoice.catalog.06.manager,model_einvoice_catalog_06,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_06_user,einvoice.catalog.06.user,model_einvoice_catalog_06,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_07_manager,einvoice.catalog.07.manager,model_einvoice_catalog_07,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_07_user,einvoice.catalog.07.user,model_einvoice_catalog_07,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_08_manager,einvoice.catalog.08.manager,model_einvoice_catalog_08,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_08_user,einvoice.catalog.08.user,model_einvoice_catalog_08,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_09_manager,einvoice.catalog.09.manager,model_einvoice_catalog_09,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_09_user,einvoice.catalog.09.user,model_einvoice_catalog_09,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_10_manager,einvoice.catalog.10.manager,model_einvoice_catalog_10,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_10_user,einvoice.catalog.10.user,model_einvoice_catalog_10,account.group_account_invoice,1,0,0,0
+access_einvoice_catalog_16_manager,einvoice.catalog.16.manager,model_einvoice_catalog_16,account.group_account_manager,1,1,1,1
+access_einvoice_catalog_16_user,einvoice.catalog.16.user,model_einvoice_catalog_16,account.group_account_invoice,1,0,0,0

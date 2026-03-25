@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_product_template_form" model="ir.ui.view">
+            <field name="name">product.template.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Localización peruana">
+                        <group>
+                            <field name="l10n_pe_osce_id"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_uom_form_view">
+            <field name="model">uom.uom</field>
+            <field name="name">uom.uom.form.inherit.odoope</field>
+            <field name="inherit_id" ref="uom.product_uom_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='uom_details']" position="inside">
+                    <field name="l10n_pe_sunat_code_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_product_category_form" model="ir.ui.view">
+            <field name="name">product.category.form</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group string="Localización peruana">
+                       <field name="l10n_pe_valuation_method_id"/>
+                        <field name="l10n_pe_existence_type_id"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_currency_rate_form_inherit" model="ir.ui.view">
+            <field name="name">res.currency.rate.form</field>
+            <field name="model">res.currency.rate</field>
+            <field name="inherit_id" ref="base.view_currency_rate_form"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="type" readonly="True"/>
+                    <field name="rate_pe" placeholder="Ejm: 3.25"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_currency_rate_tree_inherit" model="ir.ui.view">
+            <field name="name">res.currency.rate.tree</field>
+            <field name="model">res.currency.rate</field>
+            <field name="inherit_id" ref="base.view_currency_rate_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="type" readonly="True"/>
+                    <field name="rate_pe" placeholder="Ejm: 3.25"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_currency_tree_inherit" model="ir.ui.view">
+            <field name="name">res.currency.tree</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="type"/>
+                </field>
+                <field name="rate" position="before">
+                    <field name="rate_pe"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_currency_form_inherit" model="ir.ui.view">
+            <field name="name">res.currency.form</field>
+            <field name="model">res.currency</field>
+            <field name="inherit_id" ref="base.view_currency_form"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="type"/>
+                    <field name="l10n_pe_source_rate"/>
+                </field>
+                <field name="rate" position="before">
+                    <field name="rate_pe"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+    <data noupdate="1">
+        <record forcecreate="True" id="update_currency_rate" model="ir.cron">
+            <field name="name">Actualiza tipo de cambio</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">24</field>
+            <field name="interval_type">hours</field>
+            <field name="model_id" ref="base.model_res_currency"/>
+            <field name="state">code</field>
+            <field name="code">model.l10n_pe_get_currency()</field>
+        </record>
+    </data>
+</odoo>

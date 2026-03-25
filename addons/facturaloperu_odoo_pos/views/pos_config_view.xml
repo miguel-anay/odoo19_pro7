@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="pos_config_facturalo_api" model="ir.ui.view">
+    <field name="name">pos.config.facturalo.api</field>
+    <field name="model">pos.config</field>
+    <field name="inherit_id" ref="point_of_sale.pos_config_view_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <notebook>
+          <page string="CPE">
+            <group>
+              <field name="l10n_pe_pos_auto_invoice"/>
+              <field name="l10n_pe_invoice_journal_ids" widget="many2many_tags"/>
+              <field name="l10n_pe_currency_ids" widget="many2many_tags"/>
+            </group>
+          </page>
+          <page string="API">
+            <group>
+              <div class="row mt16 o_settings_container" id="facturalo_api">
+                <div class="col-xs-12 col-md-12 o_setting_box">
+                  <div class="alert alert-success" role="alert" invisible="facturalo_endpoint_state != 'success'">
+                    La URL ha sido verificada.
+                  </div>
+                  <div class="alert alert-danger" role="alert" invisible="facturalo_endpoint_state != 'error'">
+                    El URL Endpoint es inválido, intente de nuevo.
+                  </div>
+                  <div class="alert alert-info" role="alert" invisible="facturalo_endpoint_state != 'draft'">
+                    Debe verificar el endpoint presionando el botón «PRUEBA DE CONEXIÓN».
+                  </div>
+                  <div class="o_setting_left_pane">
+                    <field name="is_facturalo_api"/>
+                  </div>
+                  <div class="o_setting_right_pane">
+                    <label for="is_facturalo_api"/>
+                    <div class="text-muted">
+                      Habilitar el API de Facturalo Peru en el POS
+                    </div>
+                    <div class="content-group" invisible="not is_facturalo_api">
+                      <div class="row mt16">
+                        <label string="URL Endpoint" for="iface_facturalo_url_endpoint" class="col-md-3 o_light_label"/>
+                        <field name="iface_facturalo_url_endpoint"/>
+                      </div>
+                      <div class="row mt16">
+                        <label string="Token" for="iface_facturalo_token" class="col-md-3 o_light_label"/>
+                        <field name="iface_facturalo_token"/>
+                      </div>
+                      <div class="mt16" id="btn_test_facturalo_connection" invisible="facturalo_endpoint_state == 'success'">
+                        <button string="Prueba de conexión" type="object" name="test_facturalo_api_connection" class="oe_highlight"/>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </group>
+            <group>
+              <field name="iface_api_send_email"/>
+              <field name='facturalo_endpoint_state' invisible="1"/>
+            </group>
+          </page>
+        </notebook>
+      </xpath>
+    </field>
+  </record>
+</odoo>

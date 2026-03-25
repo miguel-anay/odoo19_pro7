@@ -1,0 +1,5 @@
+#. module: account
+#: model:ir.ui.view,arch_db:account.invoice_form
+#: model:ir.ui.view,arch_db:account.view_account_invoice_refund
+msgid "Add Credit Note"
+msgstr "Nota de cŕedito"

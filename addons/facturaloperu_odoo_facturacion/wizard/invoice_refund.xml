@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_move_reversal" model="ir.ui.view">
+            <field name="name">account.move.reversal.form.inherit</field>
+            <field name="model">account.move.reversal</field>
+            <field name="inherit_id" ref="account.view_account_move_reversal"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reason']" position="after">
+                    <field name="l10n_pe_credit_note_code" required="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_account_move_reversal_dn" model="ir.ui.view">
+            <field name="name">account.move.reversal.debit.form</field>
+            <field name="model">account.move.reversal</field>
+            <field name="arch" type="xml">
+                <form string="Crear nota de debito">
+                    <group>
+                         <group>
+                             <field name="reason"/>
+                             <field name="l10n_pe_debit_note_code" required="1"/>
+                         </group>
+                         <group>
+                             <field name="date"/>
+                         </group>
+                    </group>
+                    <footer>
+                        <button string='Emitir nota de debito' name="reverse_moves" type="object" class="btn-primary"
+                        context="{'l10n_pe_is_debit_note':True, 'default_l10n_pe_debit_note_code': l10n_pe_debit_note_code}"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_account_invoice_refund_debit" model="ir.actions.act_window">
+            <field name="name">Nota de debito</field>
+            <field name="res_model">account.move.reversal</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_account_move_reversal_dn"/>
+            <field name="context">{'is_l10n_pe_debit_note': True}</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

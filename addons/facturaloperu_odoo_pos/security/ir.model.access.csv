@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pos_order_document_type_manager,pos.order.document.type.manager,model_pos_order_document_type,base.group_erp_manager,1,1,1,1
+access_pos_order_document_type_pos_manager,pos.order.document.type.pos.manager,model_pos_order_document_type,point_of_sale.group_pos_manager,1,1,1,1
+access_pos_order_document_type_pos_user,pos.order.document.type.pos.user,model_pos_order_document_type,point_of_sale.group_pos_user,1,1,1,1
+
+access_pos_order_serial_number_manager,pos.order.serial.number.manager,model_pos_order_serial_number,base.group_erp_manager,1,1,1,1
+access_pos_order_serial_number_pos_manager,pos.order.serial.number.pos.manager,model_pos_order_serial_number,point_of_sale.group_pos_manager,1,1,1,1
+access_pos_order_serial_number_pos_user,pos.order.serial.number.pos.user,model_pos_order_serial_number,point_of_sale.group_pos_user,1,1,1,1
+
+access_pos_order_sync_manager,pos.order.sync.manager,model_pos_order_sync,base.group_erp_manager,1,1,1,1
+access_pos_order_sync_pos_manager,pos.order.sync.pos.manager,model_pos_order_sync,point_of_sale.group_pos_manager,1,1,1,1
+access_pos_order_sync_pos_user,pos.order.sync.pos.user,model_pos_order_sync,point_of_sale.group_pos_user,1,1,1,1
+
+access_feapi_user,access_feapi,model_feapi,base.group_user,1,0,0,0
+access_feapi_manager,access_feapi_manager,model_feapi,base.group_erp_manager,1,1,1,1

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Paper format 80mm ticket -->
+        <record id="paperformat_ticket_80mm" model="report.paperformat">
+            <field name="name">Ticket 80mm - FacturaloPeru</field>
+            <field name="format">custom</field>
+            <field name="page_width">80</field>
+            <field name="page_height">200</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="orientation">Portrait</field>
+            <field name="dpi">80</field>
+        </record>
+
+        <template id="report_ticket_template" name="facturaloperu_odoo_facturacion.report_ticket_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page" style="font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 9px; width: 72mm; padding: 4px;">
+
+                        <!-- ===== ENCABEZADO EMPRESA ===== -->
+                        <div style="text-align:center; margin-bottom:6px;">
+                            <div style="font-size:12px; font-weight:bold;">
+                                <t t-esc="doc.company_id.name"/>
+                            </div>
+                            <div>RUC <t t-esc="doc.company_id.vat"/></div>
+                            <t t-if="doc.company_id.street">
+                                <div>
+                                    <t t-esc="doc.company_id.street"/>
+                                    <t t-if="doc.company_id.city"> , <t t-esc="doc.company_id.city"/></t>
+                                    <t t-if="doc.company_id.state_id"> , <t t-esc="doc.company_id.state_id.name"/></t>
+                                    <t t-if="doc.company_id.country_id"> - <t t-esc="doc.company_id.country_id.name"/></t>
+                                </div>
+                            </t>
+                            <t t-if="doc.company_id.phone">
+                                <div>Central telefónica: <t t-esc="doc.company_id.phone"/></div>
+                            </t>
+                            <t t-if="doc.company_id.email">
+                                <div>Email: <t t-esc="doc.company_id.email"/></div>
+                            </t>
+                            <t t-if="doc.company_id.website">
+                                <div>Web: <t t-esc="doc.company_id.website"/></div>
+                            </t>
+                        </div>
+
+                        <!-- ===== CAJA TIPO DE DOCUMENTO ===== -->
+                        <div style="border: 1px solid #000; text-align:center; padding:5px 4px; margin-bottom:6px;">
+                            <div style="font-weight:bold;">R.U.C. <t t-esc="doc.company_id.vat"/></div>
+                            <div style="font-weight:bold; margin:2px 0;">
+                                <t t-if="doc.journal_id.l10n_pe_document_type_id.code == '01'">FACTURA ELECTRÓNICA</t>
+                                <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '03'">BOLETA DE VENTA ELECTRÓNICA</t>
+                                <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '07'">NOTA DE CRÉDITO ELECTRÓNICA</t>
+                                <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '08'">NOTA DE DÉBITO ELECTRÓNICA</t>
+                                <t t-else=""><t t-esc="doc.journal_id.l10n_pe_document_type_id.name or ''"/> ELECTRÓNICA</t>
+                            </div>
+                            <div style="font-weight:bold;">
+                                <t t-esc="doc.feapi_display_number or doc.name"/>
+                            </div>
+                        </div>
+
+                        <!-- ===== DATOS DEL COMPROBANTE ===== -->
+                        <table style="width:100%; margin-bottom:6px; border-collapse:collapse;">
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">F. Emisión:</td>
+                                <td style="padding:1px 0;"><t t-esc="doc.invoice_date or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">H. Emisión:</td>
+                                <td style="padding:1px 0;">
+                                    <t t-esc="(doc.write_date or doc.create_date).strftime('%H:%M:%S') if (doc.write_date or doc.create_date) else ''"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">F. Vencimiento:</td>
+                                <td style="padding:1px 0;"><t t-esc="doc.invoice_date_due or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">Cliente:</td>
+                                <td style="padding:1px 0;"><t t-esc="doc.partner_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">
+                                    <t t-if="doc.partner_id.catalog_06_id">
+                                        <t t-esc="doc.partner_id.catalog_06_id.name or 'RUC'"/>
+                                    </t>
+                                    <t t-else="">RUC</t>:
+                                </td>
+                                <td style="padding:1px 0;"><t t-esc="doc.partner_id.vat or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; vertical-align:top; padding:1px 2px 1px 0;">Dirección:</td>
+                                <td style="padding:1px 0;">
+                                    <t t-if="doc.partner_id.street"><t t-esc="doc.partner_id.street"/></t>
+                                    <t t-if="doc.partner_id.city">, <t t-esc="doc.partner_id.city"/></t>
+                                    <t t-if="doc.partner_id.state_id">, <t t-esc="doc.partner_id.state_id.name"/></t>
+                                    <t t-if="doc.partner_id.country_id">, <t t-esc="doc.partner_id.country_id.name"/></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; white-space:nowrap; padding:1px 2px 1px 0;">Orden de Compra:</td>
+                                <td style="padding:1px 0;"><t t-esc="doc.ref or '-'"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== TABLA DE PRODUCTOS ===== -->
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:6px;">
+                            <thead>
+                                <tr style="border-top:1px dashed #000; border-bottom:1px dashed #000;">
+                                    <th style="text-align:left; font-size:8px; padding:2px 1px;">COD.</th>
+                                    <th style="text-align:center; font-size:8px; padding:2px 1px;">CANT.</th>
+                                    <th style="text-align:center; font-size:8px; padding:2px 1px;">UNIDAD</th>
+                                    <th style="text-align:left; font-size:8px; padding:2px 1px;">DESCRIPCIÓN</th>
+                                    <th style="text-align:right; font-size:8px; padding:2px 1px;">P.UNIT</th>
+                                    <th style="text-align:right; font-size:8px; padding:2px 1px;">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.invoice_line_ids" t-as="line">
+                                    <tr style="border-bottom:1px dotted #ccc;">
+                                        <td style="padding:2px 1px; font-size:8px;"><t t-esc="line.product_id.default_code or ''"/></td>
+                                        <td style="text-align:center; padding:2px 1px; font-size:8px;"><t t-esc="line.quantity"/></td>
+                                        <td style="text-align:center; padding:2px 1px; font-size:8px;"><t t-esc="line.product_uom_id.name or ''"/></td>
+                                        <td style="padding:2px 1px; font-size:8px;">
+                                            <t t-esc="line.name"/>
+                                            <t t-if="line.discount">
+                                                <br/><span style="font-size:7px;"><t t-esc="line.discount"/>% Descuento</span>
+                                            </t>
+                                        </td>
+                                        <td style="text-align:right; padding:2px 1px; font-size:8px;"><t t-esc="'%.2f' % line.price_unit"/></td>
+                                        <td style="text-align:right; padding:2px 1px; font-size:8px;"><t t-esc="'%.2f' % line.price_subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ===== TOTALES ===== -->
+                        <table style="width:100%; margin-bottom:6px;">
+                            <tr>
+                                <td style="text-align:right; padding:1px 0;">IGV: S/</td>
+                                <td style="text-align:right; padding:1px 0; white-space:nowrap;">
+                                    <t t-esc="'%.2f' % doc.amount_tax"/>
+                                </td>
+                            </tr>
+                            <tr style="border-top:1px solid #000; font-weight:bold;">
+                                <td style="text-align:right; padding:2px 0;">TOTAL A PAGAR: S/</td>
+                                <td style="text-align:right; padding:2px 0; white-space:nowrap;">
+                                    <t t-esc="'%.2f' % doc.amount_total"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== SON (monto en letras) ===== -->
+                        <div style="margin-bottom:6px;">
+                            Son: <t t-esc="doc.api_number_to_letter or ''"/>
+                            <t t-if="doc.currency_id.name == 'PEN'"> Soles</t>
+                            <t t-elif="doc.currency_id.name == 'USD'"> Dólares Americanos</t>
+                        </div>
+
+                        <!-- ===== CUENTAS BANCARIAS ===== -->
+                        <t t-foreach="doc.company_id.bank_ids" t-as="bank">
+                            <div>
+                                <strong><t t-esc="bank.bank_id.name or ''"/></strong>
+                                <t t-if="doc.currency_id.name == 'PEN'"> Soles</t>
+                                <t t-elif="doc.currency_id.name == 'USD'"> Dólares</t>
+                                N°: <t t-esc="bank.acc_number"/>
+                            </div>
+                            <t t-if="bank.clearing_number">
+                                <div>CCI: <t t-esc="bank.clearing_number"/></div>
+                            </t>
+                        </t>
+
+                        <!-- ===== CÓDIGO HASH ===== -->
+                        <t t-if="doc.api_hash">
+                            <div style="margin-top:4px; word-break:break-all;">
+                                CÓDIGO HASH:<br/><t t-esc="doc.api_hash"/>
+                            </div>
+                        </t>
+
+                        <!-- ===== CONDICIÓN DE PAGO + VENDEDOR ===== -->
+                        <div style="margin-top:6px;">
+                            <strong>CONDICIÓN DE PAGO: <t t-esc="doc.invoice_payment_term_id.name or 'Contado'"/></strong>
+                        </div>
+                        <div>
+                            Vendedor:<br/>
+                            <t t-esc="doc.invoice_user_id.name or doc.user_id.name or ''"/>
+                        </div>
+
+                        <!-- ===== PIE DE PÁGINA ===== -->
+                        <div style="border-top:1px solid #000; text-align:center; margin-top:8px; padding-top:4px; font-size:8px;">
+                            <t t-if="doc.company_id.api_url">
+                                <t t-set="url_buscar" t-value="doc.company_id.api_url.replace('/api', '') + '/buscar'"/>
+                                Para consultar el comprobante ingresar a <strong><t t-esc="url_buscar"/></strong><br/>
+                            </t>
+                            Representacion impresa de
+                            <t t-if="doc.journal_id.l10n_pe_document_type_id.code == '01'">la Factura Electrónica</t>
+                            <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '03'">la Boleta de Venta Electrónica</t>
+                            <t t-else="">del Comprobante Electrónico</t>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <record id="reporte_account_invoice_ticket" model="ir.actions.report">
+            <field name="name">PDF ticket 80ml</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">facturaloperu_odoo_facturacion.report_ticket_template</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="facturaloperu_odoo_facturacion.paperformat_ticket_80mm"/>
+        </record>
+
+    </data>
+</odoo>

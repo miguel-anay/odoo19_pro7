@@ -1,0 +1,9 @@
+.currency{
+    float:right;
+    color:#DDD;
+    font-size:16px;
+    margin-right:32px;
+    line-height: 48px;
+    font-style:italic;
+    cursor: pointer;
+}

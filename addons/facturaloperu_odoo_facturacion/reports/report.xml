@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <template id="facturaloperu_odoo_facturacion.report_mov_template" name="facturaloperu_odoo_facturacion.report_mov_template">
+
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="header">
+                        <div class="row">
+                            <div class="col-4 mt32">
+                                <img src='/web/binary/company_logo' />
+                            </div>
+                            <div class="col-4 mt32">
+                                <t t-esc="doc.company_id.name"/>
+                                <br/>
+                                <t t-esc="doc.company_id.street"/>,
+                                <t t-esc="doc.company_id.city"/>,
+                                <t t-esc="doc.company_id.state_id.name"/>,
+                                <t t-esc="doc.company_id.country_id.name"/>
+                                <br/>
+                                <span t-if="doc.company_id.phone">
+                                    Telf.:<t t-esc="doc.company_id.phone"/>
+                                </span>
+                            </div>
+                            <div class="col-4 mt32" style="text-align:center;border: 2px solid #000 ;">
+                                <h4>
+                                    RUC: <t t-esc="doc.company_id.vat"/>
+                                    <br/>
+                                    <t t-esc="doc.journal_id.l10n_pe_document_type_id.name" /> ELECTRÓNICA
+                                    <br/>
+                                    <t t-esc="doc.name"/>
+                                    <br/>
+
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <div class="text-center" style="border-top: 1px solid black;">
+                            <div class="row">
+                                <div class="col-12 text-center" style="font-size:10px;">
+                                    <p><t t-esc="doc.company_id.email"/></p>
+                                    <t t-foreach="doc.company_id.bank_ids" t-as="bank">
+                                        <p>
+                                            <t t-esc="bank.bank_name"/> -
+                                            <t t-esc="bank.acc_number"/>
+                                        </p>
+                                    </t>
+                                    <p>
+                                        Esta es una representación impresa de
+                                        <t t-if="doc.serie_id.document_type_id.code == '01'"> FACTURA DE VENTA ELETRÓNICA</t><t t-if="doc.serie_id.document_type_id.code == '03'"> BOLETA DE VENTA ELETRÓNICA</t>.
+                                        Puede consultar en <a href="http://e-consulta.sunat.gob.pe/cl-at-itconcompag/ccS01Alias">http://e-consulta.sunat.gob.pe/cl-at-itconcompag/ccS01Alias</a>
+                                    </p>
+                                </div>
+                                <ul class="list-inline" style="font-size:10px;color:#bbb;">
+                                    <li>Página:</li>
+                                    <li><span class="page"/></li>
+                                    <li>/</li>
+                                    <li><span class="topage"/></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-size:12px;">
+                            <style type="text/css">
+                            div.box.annulled:after {
+                                content: "ANULADO";
+                                position: absolute;
+                                top: 250px;
+                                left: 200px;
+                                z-index: 1;
+                                font-family: Arial,sans-serif;
+                                -webkit-transform: rotate(-45deg);
+                                -moz-transform: rotate(-45deg);
+                                -ms-transform: rotate(-45deg);
+                                -o-transform: rotate(-45deg);
+                                transform: rotate(-45deg);
+                                font-size: 80px;
+                                color: #c00;
+                                background: #fff;
+                                border: solid 4px #c00;
+                                padding: 5px;
+                                border-radius: 5px;
+                                zoom: 1;
+                                filter: alpha(opacity=20);
+                                opacity: 0.4;
+                                -webkit-text-shadow: 0 0 2px #c00;
+                                text-shadow: 0 0 2px #c00;
+                                box-shadow: 0 0 2px #c00;
+                            }
+                            div.box.rejected:after {
+                                content: "RECHAZADO";
+                            }
+                            </style>
+                            <t t-if="doc.state_api=='null'">
+                                <div class="box annulled"></div>
+                            </t>
+                            <t t-if="doc.state_api=='reject'">
+                                <div class="box annulled rejected"></div>
+                            </t>
+                            <div class="row">
+                                <div name="invoice_address" class="col-12 mt32" style="border: 1px solid #333">
+                                    <div class="col-8">Facturado a:</div>
+                                    <div class="col-4">Vendedor: <t t-esc="doc.user_id.name"></t></div>
+                                    <div class="col-12">
+                                        <t t-esc="doc.partner_id.name"/>
+                                        <br/>
+                                        <t t-esc="doc.partner_id.country_id.name"/>,<t t-esc="doc.partner_id.state_id.name"/> <t t-esc="doc.partner_id.city"/>, <t t-esc="doc.partner_id.street"/>
+                                        <div t-if="doc.partner_id.catalog_06_id" class="">
+                                            <t t-esc="doc.partner_id.catalog_06_id.name or 'Documento'"/>: <span t-field="doc.partner_id.vat"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt16 mb16">
+                                <div class="col-12" style="border: 1px solid #333">
+                                    <div class="col-2" t-if="doc.name">
+                                        Descripción:
+                                        <p t-field="doc.name"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.invoice_date">
+                                        Fecha de Emisión:
+                                        <p t-field="doc.invoice_date"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.invoice_date_due and doc.move_type == 'out_invoice' and (doc.state == 'posted')">
+                                        Fecha de Vencimiento:
+                                        <p t-field="doc.invoice_date_due"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.invoice_date">
+                                        Moneda:
+                                        <p t-field="doc.currency_id.name"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.invoice_origin">
+                                        Recurso:
+                                        <p t-field="doc.invoice_origin"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.partner_id.ref">
+                                        Codigo de Cliente:
+                                        <p t-field="doc.partner_id.ref"/>
+                                    </div>
+                                    <div name="reference" class="col-2" t-if="doc.ref">
+                                        Doc. Referencia:
+                                        <p t-field="doc.ref"/>
+                                    </div>
+                                    <div class="col-2" t-if="doc.invoice_date">
+                                        Forma de Pago:
+                                        <p t-field="doc.invoice_payment_term_id.name"/>
+                                    </div>
+                                    <div class="col-2">
+                                        Guias de remisión:
+                                        <t t-foreach="doc.picking_ids" t-as="guides">
+                                            <p t-esc="guides.serie_number" />
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <t t-set="display_discount" t-value="any([l.discount for l in doc.invoice_line_ids])"/>
+
+                            <table class="table table-condensed" name="invoice_line_table">
+                                <thead>
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th class="hidden">Documento Recurso</th>
+                                        <th class="text-right">Cantidad</th>
+                                        <th class="text-right">Precio Unitario</th>
+                                        <th class="text-right">Unidad</th>
+                                        <th class="text-right">Importe</th>
+                                        <th t-if="display_discount" class="text-right">Desc.(%)</th>
+                                        <th class="text-right">IGV</th>
+                                        <th class="text-right">Neto Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                    <tr t-foreach="doc.invoice_line_ids" t-as="l">
+                                        <td><span t-field="l.name"/></td>
+                                        <td class="hidden"></td>
+                                        <td class="text-right">
+                                            <span t-field="l.quantity"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="l.price_unit"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="l.product_uom_id" groups="product.group_uom"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <t t-set="pq" t-value="l.price_unit * l.quantity"/>
+                                            <t t-esc="pq" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td t-if="display_discount" class="text-right">
+                                            <span t-field="l.discount"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <t t-set="price_subtotal" t-value="l.price_subtotal" />
+                                            <t t-set="amount_tax" t-value="pq-price_subtotal"/>
+                                            <t t-esc="amount_tax" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td class="text-right" id="subtotal">
+                                            <span t-field="l.price_subtotal"
+                                                t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-foreach="range(max(5-len(doc.invoice_line_ids),0))" t-as="l">
+                                        <td t-translation="off">&amp;nbsp;</td>
+                                        <td class="hidden"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td t-if="display_discount"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="clearfix">
+                                <div id="total" class="row">
+                                    <div class="col-12">
+                                        <p>
+                                            Son:
+                                            <span t-field="doc.api_number_to_letter"/>
+                                            <t t-if="doc.currency_id.name == 'PEN'">
+                                                SOLES
+                                            </t>
+                                            <t t-if="doc.currency_id.name == 'USD'">
+                                                DOLARES AMERICANOS
+                                            </t>
+                                        </p>
+                                    </div>
+                                    <div class="col-8" t-if="doc.narration" style="min-height: 50px">
+                                        <p>
+                                            Observaciones: <span t-field="doc.narration"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-4 pull-right">
+                                        <table class="table table-condensed" style="min-width: 250px;max-width: 400px;">
+                                            <tr class="border-black" style="border-bottom:1px solid #dddddd;">
+                                                <td><strong>Subtotal</strong></td>
+                                                <td class="text-right">
+                                                    <span t-field="doc.amount_untaxed" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                            <tr style="border-bottom:1px solid #dddddd;">
+                                                <td>IGV</td>
+                                                <td class="text-right">
+                                                    <span t-field="doc.amount_tax" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-black">
+                                                <td><strong>Total</strong></td>
+                                                <td class="text-right">
+                                                    <span t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+
+                                </div>
+                                <div class="col-4">
+                                    <p>Cancelada / Canjeada</p>
+                                    <p>
+                                        ____ de ____________ 20___
+                                    </p>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <img
+                                    t-attf-src="data:image/*;base64,{{doc.api_qr}}"
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <record id="reporte_account_invoice_sunat" model="ir.actions.report">
+            <field name="name">PDF - Sunat</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">facturaloperu_odoo_facturacion.report_mov_template</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_euro"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <template id="report_a4_template" name="facturaloperu_odoo_facturacion.report_a4_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                    <style>.header[class*="o_company_"] { display: none !important; }</style>
+                    <div class="page" style="font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11px; padding: 12px;">
+
+                        <!-- ===== ENCABEZADO ===== -->
+                        <table style="width:100%; border-bottom: 1px solid #000; margin-bottom: 10px;">
+                            <tr>
+                                <!-- Columna izquierda: datos empresa -->
+                                <td style="width:65%; vertical-align:top; padding-bottom:6px;">
+                                    <div style="font-size:14px; font-weight:bold;">
+                                        <t t-esc="doc.company_id.name"/>
+                                    </div>
+                                    <div>RUC <t t-esc="doc.company_id.vat"/></div>
+                                    <div>
+                                        <t t-if="doc.company_id.street"><t t-esc="doc.company_id.street"/></t>
+                                        <t t-if="doc.company_id.city"> , <t t-esc="doc.company_id.city"/></t>
+                                        <t t-if="doc.company_id.state_id"> , <t t-esc="doc.company_id.state_id.name"/></t>
+                                        <t t-if="doc.company_id.country_id"> - <t t-esc="doc.company_id.country_id.name"/></t>
+                                    </div>
+                                    <t t-if="doc.company_id.phone">
+                                        <div>Central telefónica: <t t-esc="doc.company_id.phone"/></div>
+                                    </t>
+                                    <t t-if="doc.company_id.email">
+                                        <div>Email: <t t-esc="doc.company_id.email"/></div>
+                                    </t>
+                                    <t t-if="doc.company_id.website">
+                                        <div>Web: <t t-esc="doc.company_id.website"/></div>
+                                    </t>
+                                </td>
+
+                                <!-- Columna derecha: caja de documento -->
+                                <td style="width:35%; vertical-align:top;">
+                                    <div style="border: 2px solid #333; text-align:center; padding: 10px 6px;">
+                                        <div style="font-size:15px; font-weight:bold;">
+                                            R.U.C. <t t-esc="doc.company_id.vat"/>
+                                        </div>
+                                        <div style="font-size:11px; margin: 4px 0;">
+                                            <t t-if="doc.journal_id.l10n_pe_document_type_id.code == '01'">FACTURA ELECTRÓNICA</t>
+                                            <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '03'">BOLETA DE VENTA ELECTRÓNICA</t>
+                                            <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '07'">NOTA DE CRÉDITO ELECTRÓNICA</t>
+                                            <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '08'">NOTA DE DÉBITO ELECTRÓNICA</t>
+                                            <t t-else=""><t t-esc="doc.journal_id.l10n_pe_document_type_id.name or ''"/> ELECTRÓNICA</t>
+                                        </div>
+                                        <div style="font-size:13px; font-weight:bold;">
+                                            <t t-esc="doc.feapi_display_number or doc.name"/>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== DATOS DEL COMPROBANTE ===== -->
+                        <table style="width:100%; margin-bottom:8px; border-collapse:collapse;">
+                            <tr>
+                                <td style="width:22%; font-weight:bold; padding: 2px 0;">FECHA DE EMISIÓN</td>
+                                <td style="padding: 2px 0;">: <t t-esc="doc.invoice_date"/><t t-if="doc.invoice_date"> / <t t-esc="(doc.write_date or doc.create_date).strftime('%H:%M:%S') if doc.write_date else ''"/></t></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; padding: 2px 0;">FECHA VENC.</td>
+                                <td style="padding: 2px 0;">: <t t-esc="doc.invoice_date_due or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; padding: 2px 0;">CLIENTE</td>
+                                <td style="padding: 2px 0;">: <t t-esc="doc.partner_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; padding: 2px 0;">
+                                    <t t-if="doc.partner_id.catalog_06_id">
+                                        <t t-esc="doc.partner_id.catalog_06_id.name or 'RUC'"/>
+                                    </t>
+                                    <t t-else="">RUC</t>
+                                </td>
+                                <td style="padding: 2px 0;">: <t t-esc="doc.partner_id.vat or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; padding: 2px 0;">DIRECCIÓN</td>
+                                <td style="padding: 2px 0;">:
+                                    <t t-if="doc.partner_id.street"><t t-esc="doc.partner_id.street"/></t>
+                                    <t t-if="doc.partner_id.city">, <t t-esc="doc.partner_id.city"/></t>
+                                    <t t-if="doc.partner_id.state_id">, <t t-esc="doc.partner_id.state_id.name"/></t>
+                                    <t t-if="doc.partner_id.country_id">, <t t-esc="doc.partner_id.country_id.name"/></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold; padding: 2px 0;">MONEDA</td>
+                                <td style="padding: 2px 0;">:
+                                    <t t-if="doc.currency_id.name == 'PEN'">Soles</t>
+                                    <t t-elif="doc.currency_id.name == 'USD'">Dólares Americanos</t>
+                                    <t t-else=""><t t-esc="doc.currency_id.name"/></t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-bottom:8px;">
+                            <strong>ORDEN DE COMPRA</strong> : <t t-esc="doc.ref or '-'"/>
+                        </div>
+
+                        <!-- ===== TABLA DE PRODUCTOS ===== -->
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:8px;">
+                            <thead>
+                                <tr style="border-top: 1px dashed #000; border-bottom: 1px dashed #000;">
+                                    <th style="padding: 4px 2px; text-align:left; font-size:10px;">COD.</th>
+                                    <th style="padding: 4px 2px; text-align:center; font-size:10px;">CANT.</th>
+                                    <th style="padding: 4px 2px; text-align:center; font-size:10px;">UNIDAD</th>
+                                    <th style="padding: 4px 2px; text-align:left; font-size:10px;">DESCRIPCIÓN</th>
+                                    <th style="padding: 4px 2px; text-align:right; font-size:10px;">P.UNIT</th>
+                                    <th style="padding: 4px 2px; text-align:right; font-size:10px;">DTO.</th>
+                                    <th style="padding: 4px 2px; text-align:right; font-size:10px;">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.invoice_line_ids" t-as="line">
+                                    <tr style="border-bottom: 1px dotted #ccc;">
+                                        <td style="padding: 3px 2px; font-size:10px;">
+                                            <t t-esc="line.product_id.default_code or ''"/>
+                                        </td>
+                                        <td style="padding: 3px 2px; text-align:center; font-size:10px;">
+                                            <t t-esc="line.quantity"/>
+                                        </td>
+                                        <td style="padding: 3px 2px; text-align:center; font-size:10px;">
+                                            <t t-esc="line.product_uom_id.name or ''"/>
+                                        </td>
+                                        <td style="padding: 3px 2px; font-size:10px;">
+                                            <t t-esc="line.name"/>
+                                            <t t-if="line.discount">
+                                                <br/><span style="font-size:9px; color:#666;"><t t-esc="line.discount"/>% Descuento</span>
+                                            </t>
+                                        </td>
+                                        <td style="padding: 3px 2px; text-align:right; font-size:10px;">
+                                            <t t-esc="'%.2f' % line.price_unit"/>
+                                        </td>
+                                        <td style="padding: 3px 2px; text-align:right; font-size:10px;">
+                                            <t t-esc="'%.2f' % (line.discount or 0.0)"/>
+                                        </td>
+                                        <td style="padding: 3px 2px; text-align:right; font-size:10px;">
+                                            <t t-esc="'%.2f' % line.price_subtotal"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- ===== TOTALES ===== -->
+                        <table style="width:100%; margin-bottom:10px;">
+                            <tr>
+                                <td style="width:70%;"></td>
+                                <td style="width:30%;">
+                                    <table style="width:100%;">
+                                        <tr>
+                                            <td style="padding: 2px 0;">IGV: S/</td>
+                                            <td style="text-align:right; padding: 2px 0;">
+                                                <t t-esc="'%.2f' % doc.amount_tax"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-top: 1px solid #000;">
+                                            <td style="padding: 3px 0; font-weight:bold; font-size:12px;">TOTAL A PAGAR: S/</td>
+                                            <td style="text-align:right; padding: 3px 0; font-weight:bold; font-size:12px;">
+                                                <t t-esc="'%.2f' % doc.amount_total"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== SON (monto en letras) ===== -->
+                        <div style="margin-bottom:10px;">
+                            <strong>SON: <t t-esc="(doc.api_number_to_letter or '').upper()"/>
+                                <t t-if="doc.currency_id.name == 'PEN'"> SOLES</t>
+                                <t t-elif="doc.currency_id.name == 'USD'"> DÓLARES AMERICANOS</t>
+                            </strong>
+                        </div>
+
+                        <!-- ===== CUENTAS BANCARIAS + QR ===== -->
+                        <table style="width:100%; margin-bottom:10px;">
+                            <tr>
+                                <td style="width:60%; vertical-align:top;">
+                                    <t t-foreach="doc.company_id.bank_ids" t-as="bank">
+                                        <div>
+                                            <strong><t t-esc="bank.bank_id.name or ''"/></strong>
+                                            <t t-if="doc.currency_id.name == 'PEN'"> Soles</t>
+                                            <t t-elif="doc.currency_id.name == 'USD'"> Dólares</t>
+                                            N°: <t t-esc="bank.acc_number"/>
+                                        </div>
+                                    </t>
+                                </td>
+                                <td style="width:40%; text-align:right; vertical-align:top;">
+                                    <t t-if="doc.api_qr">
+                                        <img t-attf-src="data:image/png;base64,{{doc.api_qr}}"
+                                             style="width:100px; height:100px;"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- ===== CONDICIÓN DE PAGO + VENDEDOR ===== -->
+                        <div style="margin-bottom:4px;">
+                            <strong>CONDICIÓN DE PAGO: <t t-esc="doc.invoice_payment_term_id.name or 'Contado'"/></strong>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <strong>Vendedor:</strong><br/>
+                            <t t-esc="doc.invoice_user_id.name or doc.user_id.name or ''"/>
+                        </div>
+
+                        <!-- ===== PIE DE PÁGINA ===== -->
+                        <div style="border-top: 1px solid #000; text-align:center; padding-top:6px; font-size:9px; margin-top:20px;">
+                            <t t-if="doc.company_id.api_url">
+                                <t t-set="url_buscar" t-value="doc.company_id.api_url.replace('/api', '') + '/buscar'"/>
+                                Para consultar el comprobante ingresar a <strong><t t-esc="url_buscar"/></strong><br/>
+                            </t>
+                            Representacion impresa de
+                            <t t-if="doc.journal_id.l10n_pe_document_type_id.code == '01'">la Factura Electrónica</t>
+                            <t t-elif="doc.journal_id.l10n_pe_document_type_id.code == '03'">la Boleta de Venta Electrónica</t>
+                            <t t-else="">del Comprobante Electrónico</t>
+                        </div>
+
+                    </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <record id="reporte_account_invoice_a4" model="ir.actions.report">
+            <field name="name">PDF-A4</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">facturaloperu_odoo_facturacion.report_a4_template</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="is_invoice_report" eval="True"/>
+            <field name="paperformat_id" ref="base.paperformat_euro"/>
+        </record>
+
+    </data>
+</odoo>

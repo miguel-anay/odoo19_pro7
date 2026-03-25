@@ -1,0 +1,90 @@
+<odoo>
+  <data>
+
+    <!-- Lista de facturas: columnas personalizadas SUNAT -->
+    <record id="account_move_list_inherit" model="ir.ui.view">
+      <field name="name">account.invoice.list.feapi</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_invoice_tree"/>
+      <field name="arch" type="xml">
+
+        <!-- Renombrar "Número" → "ID" -->
+        <xpath expr="//field[@name='name']" position="attributes">
+          <attribute name="string">ID</attribute>
+        </xpath>
+
+        <!-- Agregar columna NumeroSerie después de ID -->
+        <xpath expr="//field[@name='name']" position="after">
+          <field name="feapi_display_number" string="NumeroSerie" optional="show"/>
+        </xpath>
+
+        <!-- Renombrar "Estado" → "Instancia" -->
+        <xpath expr="//field[@name='status_in_payment']" position="attributes">
+          <attribute name="string">Instancia</attribute>
+        </xpath>
+
+        <!-- Agregar columna Estado Sunat después de Instancia -->
+        <xpath expr="//field[@name='status_in_payment']" position="after">
+          <field name="state_api" string="Estado Sunat" widget="badge"
+                 decoration-muted="state_api == 'register'"
+                 decoration-info="state_api == 'send'"
+                 decoration-success="state_api == 'success'"
+                 decoration-warning="state_api == 'observed'"
+                 decoration-danger="state_api in ('reject', 'null')"
+                 optional="show"/>
+        </xpath>
+
+      </field>
+    </record>
+
+    <record id="view_api_comprobantes_form" model="ir.ui.view">
+      <field name="name">feapi.comprobante</field>
+      <field name="model">feapi.comprobante</field>
+      <field name="arch" type="xml">
+        <form string="Comprobantes" edit="false" create="false">
+          <div id="api_frame" style="position:absolute; left:0; top:0; width:100%; height:100%;">
+            <field
+              name="api_frame"
+              nolabel="1"
+              readonly="1"
+              style="position:absolute; left:0; top:0; width:100%; height:100%;"/>
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_account_journal_form">
+          <field name="name">account.journal.form</field>
+          <field name="model">account.journal</field>
+          <field name="inherit_id" ref="account.view_account_journal_form"/>
+          <field name="arch" type="xml">
+              <xpath expr="//notebook" position="inside">
+                  <page string="Localización peruana" name="peruvian_account">
+                      <group style="width: 50%;">
+                          <field name="l10n_pe_document_type_id"/>
+                          <field name="l10n_pe_send_sunat"/>
+                          <field name="l10n_pe_journal_debit_id" invisible="l10n_pe_sunat_code in ('07', '08')"/>
+                          <field name="l10n_pe_journal_credit_id" invisible="l10n_pe_sunat_code in ('07', '08')"/>
+                          <field name="l10n_pe_sunat_code" invisible="True"/>
+                      </group>
+                  </page>
+              </xpath>
+          </field>
+      </record>
+
+    <record id="api_action_invoice_comprobantes" model="ir.actions.act_window">
+      <field name="name">Comprobantes</field>
+      <field name="res_model">feapi.comprobante</field>
+      <field name="view_mode">form,list</field>
+      <field name="target">current</field>
+      <field name="view_id" ref="view_api_comprobantes_form" />
+    </record>
+
+    <!-- Comprobantes menu -->
+    <menuitem id="invoice_comprobante_menu"
+        name="Comprobantes"
+        action="api_action_invoice_comprobantes"
+        parent="account.menu_finance_configuration"/>
+
+  </data>
+</odoo>

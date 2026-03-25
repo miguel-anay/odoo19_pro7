@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form view for account.move (vendor bills) -->
+        <record id="view_account_move_vendor_form" model="ir.ui.view">
+            <field name="name">account.move.vendor.form.inherit.odoope</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="l10n_pe_exchange_rate" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="l10n_pe_invoice_origin_id" invisible="not l10n_pe_invoice_origin_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Tax form extension -->
+        <record model="ir.ui.view" id="view_tax_form">
+            <field name="name">account.tax.form.inherit.odoope</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook//page[1]/group" position="after">
+                    <group name="peruvian_settings" string="Configuracion Peruana">
+                        <group>
+                            <field name="l10n_pe_tax_type_id" widget="selection"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
