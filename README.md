@@ -251,4 +251,4 @@ docker-compose exec -T web odoo -c /etc/odoo/odoo.conf -d fp_bd -u <modulo> --st
 
 ---
 
-Autor: [FacturaloPeru](http://facturaloperu.com)
+Autor: [Miguel Anay](https://portfolio.miguel-anay.nom.pe/)
