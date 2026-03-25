@@ -12,7 +12,7 @@ fi
 ODOO_DB=${ODOO_DB:-fp_bd}
 
 ODOO_CONF="-c /etc/odoo/odoo.conf -d $ODOO_DB"
-ODOO="docker-compose exec -T web odoo $ODOO_CONF"
+ODOO="docker compose exec -T web odoo $ODOO_CONF"
 
 echo ""
 echo "======================================"
@@ -22,14 +22,14 @@ echo ""
 
 # 1. Levantar contenedores
 echo "[1/6] Levantando contenedores..."
-docker-compose up -d
+docker compose up -d
 
 echo "      Esperando que PostgreSQL inicialice..."
 sleep 15
 
 # 2. Dependencias Python
 echo "[2/6] Instalando dependencias Python..."
-docker-compose exec -T web pip3 install xlsxwriter phonenumbers xlrd
+docker compose exec -T web pip3 install xlsxwriter phonenumbers xlrd
 
 # 3. Módulos base
 echo "[3/6] Instalando módulos base..."
